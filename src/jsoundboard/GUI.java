@@ -23,6 +23,7 @@
  */
 package jsoundboard;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
@@ -34,6 +35,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import javazoom.jl.player.*;
 
 /**
  *
@@ -45,8 +47,7 @@ public class GUI implements ActionListener {
     private static JFrame mainFrame;
     private final Properties properties;
 
-    private SoundPlayer player;
-    private Thread thread;
+    private SoundController soundController;
 
     /**
      * Creates the main GUI
@@ -54,7 +55,7 @@ public class GUI implements ActionListener {
     public GUI() {
 
         properties = new Properties();
-
+        soundController = new SoundController(this);
         mainFrame = new JFrame("Jsoundboard");
         JMenuBar bar = new JMenuBar();
         JMenuItem menu = new JMenuItem("Add new Button");
@@ -107,17 +108,17 @@ public class GUI implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        JButton button = (JButton) e.getSource();
+        button.setBackground(Color.red);
+        String command = button.getActionCommand();
+        soundController.play(properties.getProperty(command));
+        button.setBackground(Color.lightGray);
 
-        String command = ((JButton) e.getSource()).getActionCommand();
-        if (thread != null && thread.isAlive()) {
-            player.stopAudio();
-        }
-        player = new SoundPlayer(properties.getProperty(command));
-        thread = new Thread(player);
-
-        thread.start();
     }
-
+    public void showError(String message){
+        JOptionPane.showMessageDialog(mainPanel, message);
+        
+    }
     private void createButton(String buttonName) {
         JButton button = new JButton(buttonName);
         button.addActionListener(this);

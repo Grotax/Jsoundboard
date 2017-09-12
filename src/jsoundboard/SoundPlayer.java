@@ -24,7 +24,10 @@
 package jsoundboard;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -32,6 +35,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javazoom.jl.player.Player;
 
 /**
  *
@@ -41,56 +45,41 @@ public class SoundPlayer implements Runnable {
 
     private boolean stopClip = false;
     private final int BUFFER_SIZE = 4096;
-    private final String audioFilePath;
+    private final AudioInputStream audioStream;
+    private final AudioFormat format;
+    private final DataLine.Info info;
+    private final SourceDataLine audioLine;
 
-    public SoundPlayer(String audioFilePath) {
-        this.audioFilePath = audioFilePath;
+    public SoundPlayer(File audioFile) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        audioStream = AudioSystem.getAudioInputStream(audioFile);
+        format = audioStream.getFormat();
+        info = new DataLine.Info(SourceDataLine.class, format);
+        audioLine = (SourceDataLine) AudioSystem.getLine(info);
     }
 
     @Override
     public void run() {
-        File audioFile = new File(audioFilePath);
 
-        try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile)) {
+        try {
+            audioLine.open(format, BUFFER_SIZE);
+            audioLine.start();
+            System.out.println("Playback started.");
+            byte[] bytesBuffer = new byte[BUFFER_SIZE];
+            int bytesRead;
 
-            AudioFormat format = audioStream.getFormat();
-            DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-            
-            
-            
-            try (SourceDataLine audioLine = (SourceDataLine) AudioSystem.getLine(info)) {
-                //BUFFER_SIZE = audioLine.getBufferSize();
-                //System.out.println(BUFFER_SIZE);
-                audioLine.open(format, BUFFER_SIZE);
-                audioLine.start();
-                System.out.println("Playback started.");
-                byte[] bytesBuffer = new byte[BUFFER_SIZE];
-                int bytesRead;
+            while ((!stopClip && (bytesRead = audioStream.read(bytesBuffer)) != -1)) {
+                audioLine.write(bytesBuffer, 0, bytesRead);
 
-                while ((!stopClip && (bytesRead = audioStream.read(bytesBuffer)) != -1)) {
-                    audioLine.write(bytesBuffer, 0, bytesRead);
-                    
-                }
-                System.out.println("vor");
-                audioLine.drain();
-                System.out.println("nach");
-                audioLine.stop();
-                audioLine.close();
-
-            } catch (LineUnavailableException ex) {
-                System.out.println("Audio line for playing back is unavailable.");
-                ex.printStackTrace();
             }
+            audioLine.drain();
+            audioLine.stop();
+            audioLine.close();
 
-        } catch (UnsupportedAudioFileException ex) {
-            System.out.println("The specified audio file is not supported.");
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            System.out.println("Error playing the audio file.");
-            ex.printStackTrace();
+            System.out.println("Playback completed.");
+        } catch (LineUnavailableException | IOException ex) {
+            Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println("Playback completed.");
     }
 
     public void stopAudio() {
