@@ -21,37 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package jsoundboard;
+package de.benjamin.jsoundboard;
 
-import java.io.File;
+import java.io.FileInputStream;
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 
 /**
  *
  * @author Benjamin Brahmer
  */
-public class main {
+public class SoundPlayerMP3 implements Runnable {
 
-    public static void main(String[] args) {
+    private final Player playmp3;
 
-        File theDir = new File(System.getProperty("user.home")+"/JSoundboard");
+    public SoundPlayerMP3(FileInputStream fis) throws JavaLayerException {
+        playmp3 = new Player(fis);
+    }
 
-        // if the directory does not exist, create it
-        if (!theDir.exists()) {
-            System.out.println("creating directory: " + theDir.getName());
-            boolean result = false;
+    @Override
+    public void run() {
 
-            try {
-                theDir.mkdir();
-                result = true;
-            } catch (SecurityException se) {
-                //handle it
-            }
-            if (result) {
-                System.out.println("DIR created");
-            }
+        try {
+            playmp3.play();
+        } catch (JavaLayerException ex) {
+            System.out.println("oh boy");
         }
-        GUI gui = new GUI();
 
-        
+    }
+
+    public void stopAudio() {
+        playmp3.close();
     }
 }

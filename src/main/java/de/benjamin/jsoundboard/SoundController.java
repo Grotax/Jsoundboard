@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package jsoundboard;
+package de.benjamin.jsoundboard;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +30,6 @@ import java.io.IOException;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.Player;
 
 /**
  *

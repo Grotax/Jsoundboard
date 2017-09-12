@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package jsoundboard;
+package de.benjamin.jsoundboard;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
