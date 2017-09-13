@@ -30,6 +30,8 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -60,7 +62,11 @@ public class MenuListener implements ActionListener {
             chooseName = new JDialog();
             chooseName.setTitle("Please enter a Name for the new Button");
             chooseName.setSize(200, 200);
+            FileFilter filter = new FileNameExtensionFilter("Audio files", "mp3", "wav");
             chooser = new JFileChooser();
+            chooser.setAcceptAllFileFilterUsed(false);
+            chooser.addChoosableFileFilter(filter);
+            chooser.setLocation(gui.getPosition());
             chooser.showOpenDialog(null);
             JPanel aPanel = new JPanel();
             chooseName.add(aPanel);
@@ -70,7 +76,7 @@ public class MenuListener implements ActionListener {
             aPanel.add(buttonOK);
             buttonOK.addActionListener(this);
             buttonOK.requestFocus();
-
+            chooseName.setLocation(gui.getPosition());
             chooseName.setModal(true);
 
             chooseName.setVisible(true);

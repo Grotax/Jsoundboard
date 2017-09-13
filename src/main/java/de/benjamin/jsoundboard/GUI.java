@@ -24,6 +24,8 @@
 package de.benjamin.jsoundboard;
 
 import java.awt.Color;
+import java.awt.ComponentOrientation;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
@@ -33,6 +35,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.Mixer.Info;
 import javax.swing.*;
 
 /**
@@ -44,6 +49,7 @@ public class GUI implements ActionListener {
     private static JPanel mainPanel;
     private static JFrame mainFrame;
     private final Properties properties;
+    private JComboBox audioDevices;
 
     private SoundController soundController;
 
@@ -57,22 +63,27 @@ public class GUI implements ActionListener {
         mainFrame = new JFrame("Jsoundboard");
         JMenuBar bar = new JMenuBar();
         JMenuItem menu = new JMenuItem("Add new Button");
+        JMenuItem stopAll = new JMenuItem("Stop");
         mainPanel = new JPanel();
         MenuListener menuListener = new MenuListener(this);
 
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         bar.add(menu);
+        bar.add(stopAll);
+        stopAll.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         mainFrame.setJMenuBar(bar);
-
+        Info[] mixerInfo = AudioSystem.getMixerInfo();
+        audioDevices = new JComboBox(mixerInfo);
+        mainPanel.add(audioDevices);
         mainFrame.add(mainPanel);
         mainFrame.setSize(400, 500);
-
+        stopAll.addActionListener(this);
         menu.addActionListener(menuListener);
-
+        mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
         FileInputStream in;
         try {
-            in = new FileInputStream(System.getProperty("user.home")+"/JSoundboard/Jsoundboard.xml");
+            in = new FileInputStream(System.getProperty("user.home") + "/JSoundboard/Jsoundboard.xml");
             System.getProperty("user.dir");
             properties.loadFromXML(in);
             for (Map.Entry<Object, Object> e : properties.entrySet()) {
@@ -95,7 +106,7 @@ public class GUI implements ActionListener {
 
         properties.setProperty(buttonName, fileName);
         try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home")+"/JSoundboard/Jsoundboard.xml");
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/JSoundboard/Jsoundboard.xml");
             properties.storeToXML(fos, "These are your buttons");
         } catch (IOException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -106,17 +117,32 @@ public class GUI implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JButton button = (JButton) e.getSource();
-        button.setBackground(Color.red);
-        String command = button.getActionCommand();
-        soundController.play(properties.getProperty(command));
-        button.setBackground(Color.lightGray);
+        if (e.getSource() instanceof JButton) {
+            JButton button = (JButton) e.getSource();
+            button.setBackground(Color.red);
+            String command = button.getActionCommand();
+            Info[] mixerInfo = AudioSystem.getMixerInfo();
+            Mixer.Info[] mixers = AudioSystem.getMixerInfo();
+
+            
+            soundController.play(properties.getProperty(command), mixerInfo[audioDevices.getSelectedIndex()]);
+            button.setBackground(Color.lightGray);
+        } else {
+            soundController.stop();
+        }
 
     }
-    public void showError(String message){
-        JOptionPane.showMessageDialog(mainPanel, message);
-        
+
+    public Point getPosition() {
+        return mainFrame.getLocation();
+
     }
+
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(mainPanel, message);
+
+    }
+
     private void createButton(String buttonName) {
         JButton button = new JButton(buttonName);
         button.addActionListener(this);

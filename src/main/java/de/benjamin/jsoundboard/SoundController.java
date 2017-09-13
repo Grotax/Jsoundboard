@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javazoom.jl.decoder.JavaLayerException;
 
@@ -47,7 +48,7 @@ public class SoundController {
         this.gui = gui;
     }
 
-    public void play(String fileName) {
+    public void play(String fileName, Mixer.Info mixer) {
         this.stop();
         if (fileName.toLowerCase().endsWith(".mp3")) {
             try {
@@ -63,7 +64,7 @@ public class SoundController {
         } else {
             try {
                 File audioFile = new File(fileName);
-                player = new SoundPlayer(audioFile);
+                player = new SoundPlayer(audioFile, mixer);
                 thread = new Thread(player);
                 thread.start();
             } catch (UnsupportedAudioFileException e) {

@@ -24,7 +24,6 @@
 package de.benjamin.jsoundboard;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,9 +32,9 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javazoom.jl.player.Player;
 
 /**
  *
@@ -50,11 +49,14 @@ public class SoundPlayer implements Runnable {
     private final DataLine.Info info;
     private final SourceDataLine audioLine;
 
-    public SoundPlayer(File audioFile) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    public SoundPlayer(File audioFile, Mixer.Info mixer) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         audioStream = AudioSystem.getAudioInputStream(audioFile);
         format = audioStream.getFormat();
         info = new DataLine.Info(SourceDataLine.class, format);
-        audioLine = (SourceDataLine) AudioSystem.getLine(info);
+        Mixer.Info[] mixers = AudioSystem.getMixerInfo();
+        System.out.println(mixer.getName());
+        audioLine = (SourceDataLine) AudioSystem.getMixer(mixer).getLine(info);
+        
     }
 
     @Override
