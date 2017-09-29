@@ -24,5 +24,28 @@
 
 package de.benjamin.jsoundboard;
 
-public class AudioPlayer {
+
+import javafx.stage.Modality;
+
+public class ButtonEditor {
+    private final ButtonEditorGUI buttonEditorGUI;
+    private final ButtonManager buttonManager;
+    private final main mainwindow;
+
+    public ButtonEditor(ButtonManager buttonManager, main mainwindow){
+        buttonEditorGUI = new ButtonEditorGUI(this);
+        this.mainwindow = mainwindow;
+        this.buttonManager = buttonManager;
+    }
+    public void edditButton(){
+        buttonEditorGUI.start();
+    }
+    public void addButton(String name, String path) {
+
+        buttonManager.addButton(name, path);
+        mainwindow.reloadButtons();
+    }
+    public void validate(String Name){
+        // TODO: useful?
+    }
 }

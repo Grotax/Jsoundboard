@@ -24,74 +24,104 @@
 package de.benjamin.jsoundboard;
 
 import javafx.application.Application;
-import javafx.event.EventType;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.Map;
 
 public class main extends Application {
 
+    private final AudioController audioController = new AudioController();
+
+    private final ButtonManager buttonManager = new ButtonManager();
+    private final ButtonEditor buttonEditor = new ButtonEditor(buttonManager, this);
+    GridPane buttonPane;
+    private boolean deleteMode = false;
+    private int a = 0;
+    private int b = 0;
+
     public static void main(String[] args) {
         launch(args);
+
+    }
+
+
+    public void reloadButtons(){
+        buttonPane.getChildren().clear();
+        for (Map.Entry<Object, Object> e : buttonManager.getButtons()) {
+            Button button = new Button((String) e.getKey());
+            buttonPane.add(button, a, b);
+            a += 1;
+            b += 1;
+
+            button.setOnAction(ac -> {
+                if (deleteMode){
+                    buttonManager.deleteButton((String) e.getKey());
+                    reloadButtons();
+                }else {
+                    audioController.play((String) e.getValue());
+                }
+            });
+        }
     }
 
     @Override
     public void start(Stage primaryStage) {
-        Label label = new Label("TestLabel");
-        Button button = new Button("Add Button");
-        VBox root = new VBox(10);
-        root.getChildren().addAll(label, button);
+
+        /* Main Scene */
 
 
-        Scene scene = new Scene(root, 600, 400);
+        BorderPane borderPane = new BorderPane();
+        Scene mainScene = new Scene(borderPane, 600, 400);
+        buttonPane = new GridPane();
+        borderPane.setCenter(buttonPane);
+        BorderPane menuBar = new BorderPane();
+        borderPane.setTop(menuBar);
+        HBox menu = new HBox();
+        menuBar.setTop(menu);
+        menu.setSpacing(10);
+
+        borderPane.setTop(menuBar);
+        Button addButton = new Button("Add Button");
+        Button stopButton = new Button("Stop All");
+        Button deleteButton = new Button("Delete Buttons");
+        deleteButton.setOnAction(e -> {
+            deleteMode = !deleteMode;
+            if(deleteMode){
+                deleteButton.setStyle("-fx-background-color: red;");
+            }else{
+                deleteButton.setStyle("");
+            }
+            System.out.println(deleteMode);
+        });
+        menu.getChildren().add(addButton);
+        menu.getChildren().add(deleteButton);
+        menu.getChildren().add(stopButton);
+        menuBar.setBottom(new Separator());
+        addButton.setOnAction(e -> {
+            buttonEditor.edditButton();
+        });
+        stopButton.setOnAction(e -> {
+            audioController.stop();
+        });
+
+        /* Buttons */
+        reloadButtons();
+
+
+
         primaryStage.setTitle("Jsoundboard");
-        primaryStage.setScene(scene);
+        primaryStage.setScene(mainScene);
         primaryStage.show();
 
-        GridPane addButtonBox = new GridPane();
-        addButtonBox.setHgap(10);
-        addButtonBox.setVgap(10);
-        Scene addButton = new Scene(addButtonBox, 600, 400);
-
-        TextField filePath = new TextField();
-        FileChooser fileChooser = new FileChooser();
-
-
-        Button chooseFile = new Button("Select File");
-        Button saveButton = new Button("Save");
-        TextField nameField = new TextField();
-        chooseFile.setOnAction(e -> {
-            File selectedFile = fileChooser.showOpenDialog(primaryStage);
-            if (selectedFile != null) {
-                filePath.setText(selectedFile.getAbsolutePath());
-            }
-
-
-        });
-        nameField.setPromptText("Name");
-        addButtonBox.add(filePath, 0, 0);
-        addButtonBox.add(chooseFile, 1, 0);
-        addButtonBox.add(nameField, 0, 1);
-        addButtonBox.add(saveButton, 1, 2);
-        //addButtonBox.getChildren().addAll(filePath, chooseFile, saveButton, nameField);
-        //addButtonBox.getChildren().add();
-        button.setOnAction(e -> {
-            primaryStage.setScene(addButton);
-            primaryStage.setTitle("Jsoundboard - Add a Button");
-        });
-        saveButton.setOnAction(e -> {
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("Jsoundboard");
-        });
 
     }
 }

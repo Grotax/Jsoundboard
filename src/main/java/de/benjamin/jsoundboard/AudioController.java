@@ -24,8 +24,29 @@
 
 package de.benjamin.jsoundboard;
 
-import java.util.EventListener;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
-public class AudioController implements EventListener {
+import java.io.File;
+
+public class AudioController {
+    private MediaPlayer mediaPlayer;
+
+
+    public void play(String filePath) {
+        File file = new File(filePath);
+        Media sound = new Media(file.toURI().toString());
+        mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.play();
+    }
+
+    public void stop(){
+        try {
+            mediaPlayer.stop();
+        } catch (NullPointerException e){
+
+        }
+
+    }
 
 }
