@@ -46,7 +46,7 @@ class ButtonEditorGUI {
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         stage.initModality(Modality.APPLICATION_MODAL);
-        
+
         TextField filePath = new TextField();
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose a File");
