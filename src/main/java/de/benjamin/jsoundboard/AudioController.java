@@ -29,22 +29,21 @@ import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
 
-public class AudioController {
+class AudioController {
     private MediaPlayer mediaPlayer;
 
-
-    public void play(String filePath) {
+    void play(String filePath) {
         File file = new File(filePath);
         Media sound = new Media(file.toURI().toString());
         mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.play();
     }
 
-    public void stop(){
+    void stop() {
         try {
             mediaPlayer.stop();
-        } catch (NullPointerException e){
-
+        } catch (NullPointerException e) {
+            System.out.println("File not Found");
         }
 
     }

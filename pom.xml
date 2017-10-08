@@ -18,7 +18,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>de.benjamin.jsoundboard.main</mainClass>
+                            <mainClass>de.benjamin.jsoundboard.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -40,7 +40,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>de.benjamin.jsoundboard.main</mainClass>
+                            <mainClass>de.benjamin.jsoundboard.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

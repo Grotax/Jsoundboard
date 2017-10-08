@@ -24,7 +24,6 @@
 
 package de.benjamin.jsoundboard;
 
-import javax.imageio.IIOException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -34,10 +33,10 @@ import java.util.Properties;
 import java.util.Set;
 
 public class ButtonManager {
-    Properties buttonList = new Properties();
+    private Properties buttonList = new Properties();
 
-    public ButtonManager(){
-        File theDir = new File(System.getProperty("user.home")+"/.JSoundboard");
+    ButtonManager() {
+        File theDir = new File(System.getProperty("user.home") + "/.JSoundboard");
 
         if (!theDir.exists()) {
             System.out.println("creating directory: " + theDir.getName());
@@ -53,15 +52,15 @@ public class ButtonManager {
                 System.out.println("DIR created");
             }
         }
-        try{
+        try {
             FileInputStream in = new FileInputStream(System.getProperty("user.home") + "/.JSoundboard/Jsoundboard.xml");
             buttonList.loadFromXML(in);
-        }catch (IOException e){
-
+        } catch (IOException e) {
+            System.out.println("not able to read config");
         }
     }
 
-    public boolean addButton(String name, String path) {
+    void addButton(String name, String path) {
         if (!buttonList.containsKey(name)) {
             buttonList.setProperty(name, path);
 
@@ -69,23 +68,20 @@ public class ButtonManager {
                 FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/.JSoundboard/Jsoundboard.xml");
                 buttonList.storeToXML(fos, "These are your buttons");
             } catch (IOException ex) {
-
+                System.out.println("not able to read config");
             }
 
-            return true;
-        } else {
-            return false;
         }
 
     }
 
-    public void deleteButton(String name) {
+    void deleteButton(String name) {
         buttonList.remove(name);
         try {
             FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/.JSoundboard/Jsoundboard.xml");
             buttonList.storeToXML(fos, "These are your buttons");
         } catch (IOException ex) {
-
+            System.out.println("not able to read config");
         }
     }
 
@@ -93,7 +89,7 @@ public class ButtonManager {
         buttonList.getProperty(name);
     }
 
-    public Set<Map.Entry<Object, Object>> getButtons() {
+    Set<Map.Entry<Object, Object>> getButtons() {
         return buttonList.entrySet();
     }
 }

@@ -25,28 +25,23 @@ package de.benjamin.jsoundboard;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.util.Map;
 
-public class main extends Application {
+public class Main extends Application {
 
     private final AudioController audioController = new AudioController();
 
     private final ButtonManager buttonManager = new ButtonManager();
     private final ButtonEditor buttonEditor = new ButtonEditor(buttonManager, this);
-    GridPane buttonPane;
+    private GridPane buttonPane;
     private boolean deleteMode = false;
-    private int a = 0;
-    private int b = 0;
 
     public static void main(String[] args) {
         launch(args);
@@ -54,19 +49,26 @@ public class main extends Application {
     }
 
 
-    public void reloadButtons(){
+    void reloadButtons() {
+        int colum = 0;
+        int colum_max = 6;
+        int row = 0;
         buttonPane.getChildren().clear();
         for (Map.Entry<Object, Object> e : buttonManager.getButtons()) {
             Button button = new Button((String) e.getKey());
-            buttonPane.add(button, a, b);
-            a += 1;
-            b += 1;
+            buttonPane.add(button, colum, row);
+            if (colum == colum_max) {
+                row += 1;
+                colum = 0;
+            } else {
+                colum += 1;
+            }
 
             button.setOnAction(ac -> {
-                if (deleteMode){
+                if (deleteMode) {
                     buttonManager.deleteButton((String) e.getKey());
                     reloadButtons();
-                }else {
+                } else {
                     audioController.play((String) e.getValue());
                 }
             });
@@ -82,6 +84,8 @@ public class main extends Application {
         BorderPane borderPane = new BorderPane();
         Scene mainScene = new Scene(borderPane, 600, 400);
         buttonPane = new GridPane();
+        buttonPane.setVgap(10);
+        buttonPane.setHgap(10);
         borderPane.setCenter(buttonPane);
         BorderPane menuBar = new BorderPane();
         borderPane.setTop(menuBar);
@@ -95,9 +99,9 @@ public class main extends Application {
         Button deleteButton = new Button("Delete Buttons");
         deleteButton.setOnAction(e -> {
             deleteMode = !deleteMode;
-            if(deleteMode){
+            if (deleteMode) {
                 deleteButton.setStyle("-fx-background-color: red;");
-            }else{
+            } else {
                 deleteButton.setStyle("");
             }
             System.out.println(deleteMode);
@@ -115,7 +119,6 @@ public class main extends Application {
 
         /* Buttons */
         reloadButtons();
-
 
 
         primaryStage.setTitle("Jsoundboard");

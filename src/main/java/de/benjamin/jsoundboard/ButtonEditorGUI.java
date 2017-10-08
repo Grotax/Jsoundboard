@@ -34,64 +34,63 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class ButtonEditorGUI {
-        private final Stage stage;
-        private final GridPane gridPane;
-        private final Scene scene;
+class ButtonEditorGUI {
+    private final Stage stage;
 
-        public ButtonEditorGUI(ButtonEditor buttonEditor){
-            stage = new Stage();
-            gridPane = new GridPane();
-            scene = new Scene(gridPane, 600, 400);
-            stage.setScene(scene);
-            stage.setTitle("Haba");
-            gridPane.setHgap(10);
-            gridPane.setVgap(10);
-            stage.initModality(Modality.APPLICATION_MODAL);
+    ButtonEditorGUI(ButtonEditor buttonEditor) {
+        stage = new Stage();
+        GridPane gridPane = new GridPane();
+        Scene scene = new Scene(gridPane, 600, 400);
+        stage.setScene(scene);
+        stage.setTitle("Haba");
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        stage.initModality(Modality.APPLICATION_MODAL);
 
 
-            TextField filePath = new TextField();
-            FileChooser fileChooser = new FileChooser();
+        TextField filePath = new TextField();
+        FileChooser fileChooser = new FileChooser();
 
 
-            Button chooseFile = new Button("Select File");
-            Button saveButton = new Button("Save");
-            TextField nameField = new TextField();
-            chooseFile.setOnAction(e -> {
-                File selectedFile = fileChooser.showOpenDialog(stage);
-                if (selectedFile != null) {
-                    filePath.setText(selectedFile.getAbsolutePath());
-                }
+        Button chooseFile = new Button("Select File");
+        Button saveButton = new Button("Save");
+        TextField nameField = new TextField();
+        chooseFile.setOnAction(e -> {
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                filePath.setText(selectedFile.getAbsolutePath());
+            }
 
 
-            });
-            nameField.setPromptText("Name");
-            gridPane.add(filePath, 0, 0);
-            gridPane.add(chooseFile, 1, 0);
-            gridPane.add(nameField, 0, 1);
-            gridPane.add(saveButton, 1, 2);
+        });
+        nameField.setPromptText("Name");
+        gridPane.add(filePath, 0, 0);
+        gridPane.add(chooseFile, 1, 0);
+        gridPane.add(nameField, 0, 1);
+        gridPane.add(saveButton, 1, 2);
 
-            saveButton.setOnAction(e -> {
-                /*reset buttons to normal*/
-                nameField.setStyle("");
-                filePath.setStyle("");
+        saveButton.setOnAction(e -> {
+            /*reset buttons to normal*/
+            nameField.setStyle("");
+            filePath.setStyle("");
 
 
-                if(nameField.getText().equals("")){
-                    nameField.setStyle("-fx-text-box-border: red ; -fx-focus-color: red ;");
-                }
-                if(filePath.getText().equals("")){
-                    filePath.setStyle("-fx-text-box-border: red ; -fx-focus-color: red ;");
-                }
-                if(!filePath.getText().equals("") && !nameField.getText().equals("")){
-                    buttonEditor.addButton(nameField.getText(), filePath.getText());
-                    stage.close();
-                }
+            if (nameField.getText().equals("")) {
+                nameField.setStyle("-fx-text-box-border: red ; -fx-focus-color: red ;");
+            }
+            if (filePath.getText().equals("")) {
+                filePath.setStyle("-fx-text-box-border: red ; -fx-focus-color: red ;");
+            }
+            if (!filePath.getText().equals("") && !nameField.getText().equals("")) {
+                buttonEditor.addButton(nameField.getText(), filePath.getText());
+                stage.close();
+            }
 
-            });
+        });
 
-        }
-        public void start(){
-            stage.show();
-        }
+    }
+
+    void start() {
+        stage.show();
+    }
 }
