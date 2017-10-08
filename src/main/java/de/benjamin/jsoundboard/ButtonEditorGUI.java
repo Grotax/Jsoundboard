@@ -42,14 +42,17 @@ class ButtonEditorGUI {
         GridPane gridPane = new GridPane();
         Scene scene = new Scene(gridPane, 600, 400);
         stage.setScene(scene);
-        stage.setTitle("Haba");
+        stage.setTitle("Button Editor");
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         stage.initModality(Modality.APPLICATION_MODAL);
-
-
+        
         TextField filePath = new TextField();
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose a File");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Audio Files *.wav, *.mp3", "*.wav", "*.mp3")
+        );
 
 
         Button chooseFile = new Button("Select File");
@@ -64,6 +67,7 @@ class ButtonEditorGUI {
 
         });
         nameField.setPromptText("Name");
+        filePath.setPromptText("File Path");
         gridPane.add(filePath, 0, 0);
         gridPane.add(chooseFile, 1, 0);
         gridPane.add(nameField, 0, 1);
@@ -83,6 +87,8 @@ class ButtonEditorGUI {
             }
             if (!filePath.getText().equals("") && !nameField.getText().equals("")) {
                 buttonEditor.addButton(nameField.getText(), filePath.getText());
+                nameField.setText("");
+                filePath.setText("");
                 stage.close();
             }
 
