@@ -24,14 +24,21 @@
 package de.benjamin.jsoundboard;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 public class Main extends Application {
@@ -42,6 +49,9 @@ public class Main extends Application {
     private final ButtonEditor buttonEditor = new ButtonEditor(buttonManager, this);
     private GridPane buttonPane;
     private boolean deleteMode = false;
+    private ComboBox comboBox;
+    private ObservableList<String> audioDevices = FXCollections.observableArrayList();
+    private Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
 
     public static void main(String[] args) {
         launch(args);
@@ -50,18 +60,18 @@ public class Main extends Application {
 
 
     void reloadButtons() {
-        int colum = 0;
-        int colum_max = 6;
+        int column = 0;
+        int column_max = 6;
         int row = 0;
         buttonPane.getChildren().clear();
         for (Map.Entry<Object, Object> e : buttonManager.getButtons()) {
             Button button = new Button((String) e.getKey());
-            buttonPane.add(button, colum, row);
-            if (colum == colum_max) {
+            buttonPane.add(button, column, row);
+            if (column == column_max) {
                 row += 1;
-                colum = 0;
+                column = 0;
             } else {
-                colum += 1;
+                column += 1;
             }
 
             button.setOnAction(ac -> {
@@ -69,7 +79,9 @@ public class Main extends Application {
                     buttonManager.deleteButton((String) e.getKey());
                     reloadButtons();
                 } else {
-                    audioController.play((String) e.getValue());
+                    String audioDeviceString = comboBox.getValue().toString();
+                    int index = audioDevices.indexOf(audioDeviceString);
+                    audioController.play((String) e.getValue(), mixerInfo[index]);
                 }
             });
         }
@@ -109,6 +121,13 @@ public class Main extends Application {
         menu.getChildren().add(addButton);
         menu.getChildren().add(deleteButton);
         menu.getChildren().add(stopButton);
+
+
+        for(Mixer.Info device : mixerInfo){
+            audioDevices.add(device.getName());
+        }
+        comboBox = new ComboBox(audioDevices);
+        menu.getChildren().add(comboBox);
         menuBar.setBottom(new Separator());
         addButton.setOnAction(e -> {
             buttonEditor.edditButton();

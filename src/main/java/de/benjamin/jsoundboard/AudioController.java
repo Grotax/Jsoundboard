@@ -24,28 +24,39 @@
 
 package de.benjamin.jsoundboard;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
+import java.io.IOException;
 
 class AudioController {
-    private MediaPlayer mediaPlayer;
+    private Thread thread;
+    private SoundPlayer soundPlayer = null;
 
-    void play(String filePath) {
+    void play(String filePath, Mixer.Info mixer) {
+        this.stop();
         File file = new File(filePath);
-        Media sound = new Media(file.toURI().toString());
-        mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.play();
+        Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
+
+        try {
+            soundPlayer = new SoundPlayer(file, mixer);
+        } catch (UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
+        thread = new Thread(soundPlayer);
+        thread.start();
     }
 
     void stop() {
-        try {
-            mediaPlayer.stop();
-        } catch (NullPointerException e) {
-            System.out.println("File not Found");
+        if (thread != null && thread.isAlive()) {
+            soundPlayer.stopAudio();
         }
-
     }
 
 }
