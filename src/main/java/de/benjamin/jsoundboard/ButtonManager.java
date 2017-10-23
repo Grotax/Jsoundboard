@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -61,6 +63,34 @@ public class ButtonManager {
     }
 
     void addButton(String name, String path) {
+
+        File theDir = new File(System.getProperty("user.home") + File.separator + "JSoundboard");
+
+        if (!theDir.exists()) {
+            System.out.println("creating directory: " + theDir.getName());
+            boolean result = false;
+
+            try {
+                theDir.mkdir();
+                result = true;
+            } catch (SecurityException se) {
+                //handle it
+            }
+            if (result) {
+                System.out.println("DIR created");
+            }
+        }
+        try {
+            Path source = new File(path).toPath();
+            String splits[] = path.split(File.separator);
+            path = theDir + File.separator + splits[splits.length-1];
+            System.out.println(path);
+            FileOutputStream dst = new FileOutputStream(path);
+            Files.copy(source,dst);
+        } catch (IOException e) {
+            System.out.println("not able to copy audio file");
+        }
+
         if (!buttonList.containsKey(name)) {
             buttonList.setProperty(name, path);
 

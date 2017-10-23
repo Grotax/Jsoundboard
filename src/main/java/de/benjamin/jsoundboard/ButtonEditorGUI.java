@@ -51,7 +51,8 @@ class ButtonEditorGUI {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose a File");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Audio Files *.wav, *.mp3", "*.wav", "*.mp3")
+                new FileChooser.ExtensionFilter("Audio Files *.wav, ","*.wav")
+                //"Audio Files *.wav, *.mp3", "*.wav", "*.mp3"
         );
 
 
