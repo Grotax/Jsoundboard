@@ -37,7 +37,6 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
- *
  * @author Benjamin Brahmer
  */
 public class SoundPlayer implements Runnable {
@@ -56,7 +55,7 @@ public class SoundPlayer implements Runnable {
         Mixer.Info[] mixers = AudioSystem.getMixerInfo();
         System.out.println(mixer.getName());
         audioLine = (SourceDataLine) AudioSystem.getMixer(mixer).getLine(info);
-        
+
     }
 
     @Override

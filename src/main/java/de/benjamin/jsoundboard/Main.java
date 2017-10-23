@@ -124,7 +124,7 @@ public class Main extends Application {
         menu.getChildren().add(stopButton);
 
 
-        for(Mixer.Info device : mixerInfo){
+        for (Mixer.Info device : mixerInfo) {
             audioDevices.add(device.getName());
         }
         comboBox = new ComboBox(audioDevices);
@@ -143,7 +143,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("Jsoundboard");
         primaryStage.setScene(mainScene);
-        primaryStage.setOnCloseRequest(e ->{
+        primaryStage.setOnCloseRequest(e -> {
             audioController.stop();
             Platform.exit();
         });
