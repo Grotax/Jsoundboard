@@ -24,6 +24,7 @@
 package de.benjamin.jsoundboard;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -142,6 +143,10 @@ public class Main extends Application {
 
         primaryStage.setTitle("Jsoundboard");
         primaryStage.setScene(mainScene);
+        primaryStage.setOnCloseRequest(e ->{
+            audioController.stop();
+            Platform.exit();
+        });
         primaryStage.show();
 
 
